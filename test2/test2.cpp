@@ -65,7 +65,7 @@ int main()
 
 	// build and compile our shader zprogram
 	// ------------------------------------
-	Shader ourShader("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test1\\shaders\\test1.vs",
+	Shader roadShader("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test1\\shaders\\test1.vs",
 		"E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test1\\shaders\\test1.fs");
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
@@ -77,7 +77,6 @@ int main()
 		-0.5f,	-50.0f, 0.0f,    0.0f, -50.0f, // bottom left
 		-0.5f,  100.0f, 0.0f,    0.0f, 100.0f  // top left 
 	};
-
 
 	unsigned int indices_road[] = {
 		0, 1, 3, // first triangle
@@ -176,6 +175,7 @@ int main()
 
 
 
+
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -237,6 +237,48 @@ int main()
 	Shader carShader("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test2\\shaders\\car.vs",
 		"E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test2\\shaders\\car.fs");
 
+
+
+	//金字塔部分
+	float Pyramid[] = {
+		 11.5f, 0.0f,  11.5f,
+		 11.5f, 0.0f, -11.5f,
+		-11.5f, 0.0f, -11.5f,
+		-11.5f, 0.0f,  11.5f,
+		  0.0f, 13.6f, 0.0f
+	};
+
+	unsigned int indices_Pyramid[] = {
+		0, 1, 4,
+		1, 2, 4,
+		2, 3, 4,
+		3, 0, 4
+	};
+
+	unsigned VAO_PYRAMID, VBO_PYRAMID, EBO_PYRAMID;
+	glGenVertexArrays(1,& VAO_PYRAMID);
+	glGenBuffers(1, &VBO_PYRAMID);
+	glGenBuffers(1, &EBO_PYRAMID);
+
+	glBindVertexArray(VAO_PYRAMID);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_PYRAMID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Pyramid), Pyramid, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_PYRAMID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_Pyramid), indices_Pyramid, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	Shader pShader("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test1\\shaders\\p.vs",
+		"E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test1\\shaders\\p.fs");
+
+	glm::mat4 model_p = glm::mat4(1.0f);
+	model_p = glm::scale(model_p, glm::vec3(0.05f, 0.05f, 0.05f));
+	glm::mat4 projection = glm::mat4(1.0f);
+	projection = glm::perspective(glm::radians(30.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -254,30 +296,28 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
-
 		glBindTexture(GL_TEXTURE_2D, texture);
-		ourShader.use();
 		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(30.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		
+		
+		//绘制路
+		roadShader.use();
+		
+		glm::mat4 model_road = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+		model_road = glm::rotate(model_road, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-		ourShader.setMat4("view", view);
-		ourShader.setMat4("model", model);
-		ourShader.setMat4("projection", projection);
-
+		roadShader.setMat4("view", view);
+		roadShader.setMat4("model", model_road);
+		roadShader.setMat4("projection", projection);
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-
+		//绘制小车
 		carShader.use();
 		glm::mat4 model_car = glm::mat4(1.0f);
 		model_car = glm::translate(model_car, glm::vec3(0.0f, 0.5f, 0.0f));
 		model_car = glm::scale(model_car, glm::vec3(0.025, 0.025, 0.025));
-		
 		model_car = glm::rotate(model_car, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		carShader.setMat4("view", view);
@@ -289,7 +329,15 @@ int main()
 		glBindVertexArray(VAO_CAR);
 		glDrawArrays(GL_TRIANGLES, 0, 72);
 
-	
+		//绘制金字塔
+		pShader.use();
+		pShader.setMat4("view", view);
+		pShader.setMat4("model", model_p);
+		pShader.setMat4("projection", projection);
+		glBindVertexArray(VAO_PYRAMID);
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+
+
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -349,7 +397,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	lastX = xpos;
 	lastY = ypos;
-
+	
 	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
