@@ -26,9 +26,6 @@ bool enterResponse = true;
 std::vector<glm::vec3> controlPoints = { glm::vec3(-1.0f, 1.0f, 0.0f) };
 std::vector<glm::vec3> interpolatedPoints = { glm::vec3(0.0f, 0.0f, 0.0f) };
 
-
-
-
 int main()
 {
 	// glfw: initialize and configure
