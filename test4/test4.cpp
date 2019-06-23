@@ -100,7 +100,7 @@ int main()
 		ourShader.setVec4("ourColor", glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
 		glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
 		glBufferData(GL_ARRAY_BUFFER, controlPoints.size() * sizeof(glm::vec3), controlPoints.data(), GL_STATIC_DRAW);
-		glDrawArrays(GL_POINTS, 1, controlPoints.size() - 2);
+		glDrawArrays(GL_POINTS, 1, controlPoints.size() - 1);
 		glDrawArrays(GL_LINE_STRIP, 1, controlPoints.size()- 1);
 		 
 		glLineWidth(2.0f);
@@ -146,6 +146,9 @@ void processInput(GLFWwindow* window)
 		}
 
 		enterResponse = false;
+	}
+	else if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && currentPointNumber < MAXPOINT ){
+		std::cout << "¿ØÖÆµã²»×ã" << std::endl;
 	}
 }
 

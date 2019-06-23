@@ -21,7 +21,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-Camera camera(glm::vec3(0.0f, 0.5f, 5.0f));
+Camera camera(glm::vec3(8.0f, 0.5f, 5.0f));
 double lastX = SCR_WIDTH / 2.0f;
 double lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -90,28 +90,28 @@ int main()
 		 40.0f, -15.0f,  5.0f,
 		-40.0f,   0.0f,  5.0f,
 		 40.0f, -15.0f,  5.0f,
-		-40.0f, -15.0f,  5.0f,
+		-40.0f, -15.0f,  5.0f,//18
 
 		40.0f,  0.0f,  -15.0f,
 		40.0f,  0.0f,   15.0f,
 		40.0f, -15.0f,  15.0f,
 		40.0f,  0.0f,  -15.0f,
 		40.0f, -15.0f,  15.0f,
-		40.0f, -15.0f, -15.0f,
+		40.0f, -15.0f, -15.0f,//36
 
 		-40.0f,  0.0f, -15.0f,
 		-40.0f,  0.0f,  15.0f,
 		-40.0f, -15.0f, 15.0f,
 		-40.0f,  0.0f, -15.0f,
 		-40.0f, -15.0f, 15.0f,
-		-40.0f, -15.0f,-15.0f,
+		-40.0f, -15.0f,-15.0f,//54
 
 		-40.0f,  0.0f,  -15.0f,
 		 40.0f,  0.0f,  -15.0f,
 		 40.0f, -15.0f, -15.0f,
 		-40.0f,  0.0f,  -15.0f,
 		 40.0f, -15.0f, -15.0f,
-		-40.0f, -15.0f, -15.0f,
+		-40.0f, -15.0f, -15.0f,//72
 		
 		-40.0f,  0.0f,   15.0f,
 		-40.0f,  0.0f,  -15.0f,
@@ -173,9 +173,6 @@ int main()
 	};
 
 
-
-
-
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -195,6 +192,38 @@ int main()
 	// texture coord attribute
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+
+	float ground[]=
+	{
+			0.5f,  0.0f, 100.0f,
+			0.5f,  0.0f, -50.0f,
+			50.0f, 0.0f,-50.0f,
+			50.0f, 0.0f, 100.0f
+	};
+
+	unsigned int indices_ground[] = {
+		0,1,2,
+		2,3,0
+	};
+
+	unsigned int VAO_G, VBO_G, EBO_G;
+	glGenVertexArrays(1, &VAO_G);
+	glGenBuffers(1, &VBO_G);
+	glGenBuffers(1, &EBO_G);
+
+	glBindVertexArray(VAO_G);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_G);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(ground), ground, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_G);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_ground), indices_ground, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	Shader groundShader("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test2\\shaders\\g.vs",
+		"E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test2\\shaders\\g.fs");
 
 
 	// load and create a texture 
@@ -255,6 +284,13 @@ int main()
 		3, 0, 4
 	};
 
+	glm::vec3 pPos[] = {
+		glm::vec3(-50.0f, 0.0f, -40.0f),
+		glm::vec3(40.0f, 0.0f, -50.0f),
+		glm::vec3(30.0f, 0.0f, -0.0f),
+
+	};
+
 	unsigned VAO_PYRAMID, VBO_PYRAMID, EBO_PYRAMID;
 	glGenVertexArrays(1,& VAO_PYRAMID);
 	glGenBuffers(1, &VBO_PYRAMID);
@@ -274,8 +310,7 @@ int main()
 	Shader pShader("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test1\\shaders\\p.vs",
 		"E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test1\\shaders\\p.fs");
 
-	glm::mat4 model_p = glm::mat4(1.0f);
-	model_p = glm::scale(model_p, glm::vec3(0.05f, 0.05f, 0.05f));
+	
 	glm::mat4 projection = glm::mat4(1.0f);
 	projection = glm::perspective(glm::radians(30.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
@@ -293,7 +328,8 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		//63, 142, 199
+		glClearColor(0.247f, 0.557f, 0.78f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -316,28 +352,61 @@ int main()
 		//绘制小车
 		carShader.use();
 		glm::mat4 model_car = glm::mat4(1.0f);
-		model_car = glm::translate(model_car, glm::vec3(0.0f, 0.5f, 0.0f));
-		model_car = glm::scale(model_car, glm::vec3(0.025, 0.025, 0.025));
+		model_car = glm::translate(model_car, glm::vec3(0.0f, 0.25f, 0.0f));
+		
 		model_car = glm::rotate(model_car, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
+		//颜色渐变
+		float timeValue = glfwGetTime();
+		float Value = sin(timeValue) / 2.0f + 0.5f;
+		carShader.setVec4("ourColor", glm::vec4(Value, 0.0f, 0.0f, 1.0f ));
+
+
 		carShader.setMat4("view", view);
+		float scaleValue;
+		if (timeValue < 7.0f)
+			scaleValue = 0.025 + timeValue*0.005;
+		else
+			scaleValue = 0.025 + 7* 0.005;
+		model_car = glm::scale(model_car, glm::vec3(0.025, scaleValue, 0.025));
 		carShader.setMat4("model", model_car);
 		carShader.setMat4("projection", projection);
-		float time = glfwGetTime() * 50;
-		carShader.setFloat("dx", time);
+		
+		carShader.setFloat("dx", timeValue*50);
+
+
 
 		glBindVertexArray(VAO_CAR);
 		glDrawArrays(GL_TRIANGLES, 0, 72);
 
 		//绘制金字塔
 		pShader.use();
-		pShader.setMat4("view", view);
-		pShader.setMat4("model", model_p);
-		pShader.setMat4("projection", projection);
-		glBindVertexArray(VAO_PYRAMID);
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		for (int k = 0; k < 3; k++) {
+			glm::mat4 model_p = glm::mat4(1.0f);
+			model_p = glm::scale(model_p, glm::vec3(0.05f, 0.05f, 0.05f));
+			model_p = glm::translate(model_p, pPos[k]);
 
+			pShader.setMat4("view", view);
+			pShader.setMat4("model", model_p);
+			pShader.setMat4("projection", projection);
+			glBindVertexArray(VAO_PYRAMID);
+			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		}
+		
 
+		//绘制地面
+		groundShader.use();
+		glm::mat4 model_g = glm::mat4(1.0f);
+		groundShader.setMat4("view", view);
+		groundShader.setMat4("model", model_g);
+		groundShader.setMat4("projection", projection);
+		glBindVertexArray(VAO_G);
+
+		groundShader.setFloat("i", 1.0f);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		groundShader.setFloat("i", -1.0f);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -373,6 +442,10 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 }
+
+
+
+
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
