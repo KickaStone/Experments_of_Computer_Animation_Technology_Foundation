@@ -89,8 +89,8 @@ void morphTriangle(Mat &img1, Mat &img2, Mat &img, vector<Point2f> &t1, vector<P
 int main( int argc, char** argv)
 {
 	
-    string filename1("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test6\\hillary_clinton.jpg");
-    string filename2("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test6\\ted_cruz.jpg"	);
+    string filename1("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test6\\donald_trump.jpg");
+    string filename2("E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test6\\BARACK-OBAMA.jpg"	);
     
 
 	string videoName = "E:\\Solutions\\Experments_of_Computer_Animation_Technology_Foundation\\test6\\video\\test6.avi";

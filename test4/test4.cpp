@@ -373,9 +373,6 @@ int main()
 		carShader.setMat4("projection", projection);
 
 		carShader.setFloat("dx", timeValue * 50);
-
-
-
 		glBindVertexArray(VAO_CAR);
 		glDrawArrays(GL_TRIANGLES, 0, 72);
 

@@ -25,7 +25,7 @@ namespace Camera {
 		return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
 	}
 
-	void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
+	void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {   
 		GLfloat velocity = this->MovementSpeed * deltaTime;
 		if (direction == FORWARD)
 			this->Position += this->Front*velocity;
