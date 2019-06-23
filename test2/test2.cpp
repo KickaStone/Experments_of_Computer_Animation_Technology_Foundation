@@ -21,7 +21,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-Camera camera(glm::vec3(8.0f, 0.5f, 5.0f));
+Camera camera(glm::vec3(0.0f, 0.5f, 5.0f));
 double lastX = SCR_WIDTH / 2.0f;
 double lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -44,7 +44,7 @@ int main()
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "test2", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -356,19 +356,26 @@ int main()
 		
 		model_car = glm::rotate(model_car, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-		//颜色渐变
+		//小车颜色渐变
 		float timeValue = glfwGetTime();
-		float Value = sin(timeValue) / 2.0f + 0.5f;
-		carShader.setVec4("ourColor", glm::vec4(Value, 0.0f, 0.0f, 1.0f ));
+		//float Value = sin(timeValue) / 2.0f + 0.5f;
+		//carShader.setVec4("ourColor", glm::vec4(Value, 1.0f, 1.0f, 1.0f ));
+		float greenValue, BlueValue;
+		if (timeValue < 2) {
+			greenValue = 0;
+			BlueValue = 1.0f;
+		}else if(timeValue >=2 && timeValue <7){
+			greenValue = (timeValue -2) / 5;
+			BlueValue = 1 - (timeValue - 2) / 5;
+		}else {
 
+			greenValue = 1.0f;
+			BlueValue = 0;
+		}
+		carShader.setVec4("ourColor", glm::vec4(BlueValue, greenValue, 0.0f, 1.0f));
 
 		carShader.setMat4("view", view);
-		float scaleValue;
-		if (timeValue < 7.0f)
-			scaleValue = 0.025 + timeValue*0.005;
-		else
-			scaleValue = 0.025 + 7* 0.005;
-		model_car = glm::scale(model_car, glm::vec3(0.025, scaleValue, 0.025));
+		model_car = glm::scale(model_car, glm::vec3(0.025, 0.025, 0.025));
 		carShader.setMat4("model", model_car);
 		carShader.setMat4("projection", projection);
 		
