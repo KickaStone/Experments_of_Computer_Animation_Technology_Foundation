@@ -1,0 +1,3 @@
+# Experments_of_Computer_Animation_Technology_Foundation
+
+山东大学2017级计算机动画技术基础实验
